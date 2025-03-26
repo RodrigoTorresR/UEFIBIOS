@@ -1,0 +1,215 @@
+//another approach
+/*
+__get_cpuid (unsigned int __level, unsigned int *__eax, unsigned int *__ebx, unsigned int *__ecx, unsigned int *__edx);
+#include <cpuid.h>
+*/
+
+/*
+#include <stdlib.h>
+#include <string.h>
+#include <intrinsics.h>
+
+_CPUID cpuinfo;
+int main(void) {
+_cpuid(&cpuinfo);
+printf("Vendor: %s\n", cpuinfo.Vendor);
+return 0;
+}
+*/
+
+#include <Windows.h>
+#include <stdio.h>
+#include <xmmintrin.h>
+#include <iphlpapi.h>
+#include <Rpc.h>
+
+static void GetMACaddress(void);
+static void uuidGetMACaddress(void);
+
+int main(){
+    SYSTEM_INFO SysInfo;
+    GetSystemInfo(&SysInfo);
+    printf("Processors - %d\n" , SysInfo.dwNumberOfProcessors);
+    DWORD a , b , c , d , e;
+    DWORD BasicLeaves;
+    char* VendorID = (char*)malloc(20);
+    char* message = (char*)malloc(20);
+    _asm {
+        pusha
+        pushfd
+        pop eax
+        push eax
+        xor eax , 0x00200000
+        push eax
+        popfd
+        pushfd
+        pop ecx
+        pop eax
+        xor eax , ecx
+        mov [a] , eax
+        }
+    if(a & 0x00200000){
+        printf("CPUID opcode supported.\n");
+        } else {
+        printf("CPUID opcode not supported, exiting...\n");
+        return 0;
+        }
+
+    //DWORD* pa = &a[0];
+    //DWORD* pb = &a[1];
+    //DWORD* pc = &a[2];
+    //DWORD* pd = &a[3];
+    //a[4] = 0;
+    e = 0;
+    __asm {
+        mov eax , 0
+        cpuid
+        mov [BasicLeaves] , eax;
+        mov [b] , ebx;
+        mov [c] , ecx;
+        mov [d] , edx;
+        }
+    memcpy(&VendorID[0] , &b , 4);
+    memcpy(&VendorID[4] , &d , 4);
+    memcpy(&VendorID[8] , &c , 4);
+    VendorID[12] = 0;
+
+    printf("%d Basic Leaves\nVendorID - %s\n" , BasicLeaves , VendorID);
+
+    __asm {
+        mov eax , 1
+        cpuid
+        mov [a] , eax;
+        mov [b] , ebx;
+        mov [c] , ecx;
+        mov [d] , edx;
+        }
+    if(d & 0x00000001) printf("FPU\n");
+    if(d & 0x00000200) printf("APIC On-Chip\n");
+    if(d & 0x00040000) printf("Processor Serial Number Present\n");
+    if(d & 0x00800000) printf("MMX\n");
+    if(d & 0x01000000) printf("SSE\n");
+    if(d & 0x02000000) printf("SSE2\n");
+    if(d & 0x08000000) printf("Hyperthreading (HTT)\n");
+
+    if(c & 0x00000001) printf("SSE3\n");
+    if(c & 0x00000200) printf("SSSE3\n");
+    if(c & 0x00080000) printf("SSE4.1\n");
+    if(c & 0x00100000) printf("SSE4.2\n");
+    if(c & 0x02000000) printf("AES\n");
+
+
+    __asm {
+        mov eax , 0x80000000
+        cpuid
+        and eax , 0x7fffffff;
+        mov [a] , eax;
+        mov [b] , ebx;
+        mov [c] , ecx;
+        mov [d] , edx;
+        }
+
+    printf("%d Extended Leaves\n" , a);
+
+    printf("Processor Brand String - ");
+    __asm {
+        mov eax , 0x80000002
+        cpuid
+        mov [a] , eax;
+        mov [b] , ebx;
+        mov [c] , ecx;
+        mov [d] , edx;
+        }
+    memcpy(&message[0] , &a , 4);
+    memcpy(&message[4] , &b , 4);
+    memcpy(&message[8] , &c , 4);
+    memcpy(&message[12] , &d , 4);
+    message[16] = 0;
+    printf("%s" , message);
+
+    __asm {
+        mov eax , 0x80000003
+        cpuid
+        mov [a] , eax;
+        mov [b] , ebx;
+        mov [c] , ecx;
+        mov [d] , edx;
+        }
+
+    memcpy(&message[0] , &a , 4);
+    memcpy(&message[4] , &b , 4);
+    memcpy(&message[8] , &c , 4);
+    memcpy(&message[12] , &d , 4);
+    message[16] = 0;
+    printf("%s" , message);
+
+    __asm {
+        mov eax , 0x80000004
+        cpuid
+        mov [a] , eax;
+        mov [b] , ebx;
+        mov [c] , ecx;
+        mov [d] , edx;
+        popa
+        }
+    memcpy(&message[0] , &a , 4);
+    memcpy(&message[4] , &b , 4);
+    memcpy(&message[8] , &c , 4);
+    memcpy(&message[12] , &d , 4);
+    message[16] = 0;
+    printf("%s\n" , message);
+
+    char VolumeName[256]; DWORD VolumeSerialNumber; DWORD MaxComponentLength; DWORD FileSystemFlags; char FileSystemNameBuffer[256]; 
+    GetVolumeInformationA("c:\\" , VolumeName , 256 , &VolumeSerialNumber , &MaxComponentLength , &FileSystemFlags , (LPSTR)&FileSystemNameBuffer , 256);
+    printf("Serialnumber - %X\n" , VolumeSerialNumber);
+
+    GetMACaddress();
+    uuidGetMACaddress();
+
+    return 0;
+    }
+
+// Fetches the MAC address and prints it
+static void GetMACaddress(void){
+    IP_ADAPTER_INFO AdapterInfo[16];        // Allocate information 
+                                            // for up to 16 NICs
+    DWORD dwBufLen = sizeof(AdapterInfo);   // Save memory size of buffer
+
+    DWORD dwStatus = GetAdaptersInfo(       // Call GetAdapterInfo
+    AdapterInfo,                            // [out] buffer to receive data
+    &dwBufLen);                             // [in] size of receive data buffer
+    //assert(dwStatus == ERROR_SUCCESS);    // Verify return value is 
+                                            // valid, no buffer overflow
+
+    PIP_ADAPTER_INFO pAdapterInfo = AdapterInfo; // Contains pointer to
+                                            // current adapter info
+    do {
+        printf("Adapter MAC Address - %X-%X-%X-%X-%X-%X\n" , pAdapterInfo->Address[0] , pAdapterInfo->Address[1] , pAdapterInfo->Address[2] , pAdapterInfo->Address[3] , pAdapterInfo->Address[4] , pAdapterInfo->Address[5]);
+        printf("Adapter IP Address  - %s\n" , pAdapterInfo->CurrentIpAddress);
+        printf("Adapter Type        - %d\n" , pAdapterInfo->Type);
+        printf("Adapter Name        - %s\n" , pAdapterInfo->AdapterName);
+        printf("Adapter Description - %s\n" , pAdapterInfo->Description);
+        uuidGetMACaddress();
+
+        printf("\n");
+        //PrintMACaddress(pAdapterInfo->Address); // Print MAC address
+        pAdapterInfo = pAdapterInfo->Next;      // Progress through 
+                                                // linked list
+        } while(pAdapterInfo);                  // Terminate if last adapter
+    }
+
+// Fetches the MAC address and prints it
+
+static void uuidGetMACaddress(void)
+{
+  unsigned char MACData[6];
+
+  UUID uuid;
+  UuidCreateSequential( &uuid );    // Ask OS to create UUID
+
+  for (int i=2; i<8; i++)  // Bytes 2 through 7 inclusive 
+                           // are MAC address
+    MACData[i - 2] = uuid.Data4[i];
+
+  printf("UUID MAC Address - %X-%X-%X-%X-%X-%X\n" , MACData[0] , MACData[1] , MACData[2] , MACData[3] , MACData[4] , MACData[5]);
+}//*/

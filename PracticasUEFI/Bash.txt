@@ -1,0 +1,151 @@
+rodrigo@raspberrypi:~ $ cd /media/rodrigo/UEFI\ SHELL/PracticasUEFI
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc efi.c -o efi.exe
+efi.c:2:9: error: #include expects "FILENAME" or <FILENAME>
+    2 | #include
+      |         ^
+efi.c: In function ‘efi_main’:
+efi.c:4:2: error: ‘return0’ undeclared (first use in this function)
+    4 |  return0;
+      |  ^~~~~~~
+efi.c:4:2: note: each undeclared identifier is reported only once for each function it appears in
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc efi.c -o efi.exe
+efi.c:2:9: error: #include expects "FILENAME" or <FILENAME>
+    2 | #include
+      |         ^
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc efi.c -o efi.exe
+In file included from efi.c:2:
+efi.h:14:39: error: expected identifier or ‘(’ before ‘;’ token
+   14 | #define EFIAPI __attribute__((ms_abi));  //x86_64 Microsoft calling convention
+      |                                       ^
+efi.h:67:2: note: in expansion of macro ‘EFIAPI’
+   67 | (EFIAPI *EFI_IMAGE_ENTRY_POINT)(
+      |  ^~~~~~
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc efi.c -o efi.exe
+/usr/bin/x86_64-w64-mingw32-ld: /usr/lib/gcc/x86_64-w64-mingw32/10-win32/../../../../x86_64-w64-mingw32/lib/libmingw32.a(lib64_libmingw32_a-crt0_c.o): in function `main':
+./build/x86_64-w64-mingw32-x86_64-w64-mingw32-crt/./mingw-w64-crt/crt/crt0_c.c:18: undefined reference to `WinMain'
+collect2: error: ld returned 1 exit status
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc efi.c -o efi.exe
+/usr/bin/x86_64-w64-mingw32-ld: /usr/lib/gcc/x86_64-w64-mingw32/10-win32/../../../../x86_64-w64-mingw32/lib/libmingw32.a(lib64_libmingw32_a-crt0_c.o): in function `main':
+./build/x86_64-w64-mingw32-x86_64-w64-mingw32-crt/./mingw-w64-crt/crt/crt0_c.c:18: undefined reference to `WinMain'
+collect2: error: ld returned 1 exit status
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ i686-w64-mingw32-gcc efi.c -o efi.exe
+/usr/bin/i686-w64-mingw32-ld: /usr/lib/gcc/i686-w64-mingw32/10-win32/../../../../i686-w64-mingw32/lib/../lib/libmingw32.a(lib32_libmingw32_a-crt0_c.o): in function `main':
+./build/i686-w64-mingw32-i686-w64-mingw32-crt/./mingw-w64-crt/crt/crt0_c.c:18: undefined reference to `WinMain@16'
+collect2: error: ld returned 1 exit status
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc efi.c -o efi.exe -Wall -Wextra -Wpedantic -02 -s
+x86_64-w64-mingw32-gcc: error: unrecognized command-line option ‘-02’
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc efi.c -o efi.exe -Wall -Wextra -Wpedantic -02 -s
+x86_64-w64-mingw32-gcc: error: unrecognized command-line option ‘-02’
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi.c  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o BOOTX64.EFI efi.h
+/usr/bin/x86_64-w64-mingw32-ld: no input files
+collect2: error: ld returned 1 exit status
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ i686-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi.c  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o BOOTX64.EFI efi.h
+efi.h:70:1: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ at end of input
+   70 | )
+      | ^
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi.c  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o BOOTX64.EFI efi.h
+/usr/bin/x86_64-w64-mingw32-ld: no input files
+collect2: error: ld returned 1 exit status
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ i686-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi.c  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o BOOTX64.EFI efi.h
+/usr/bin/i686-w64-mingw32-ld: no input files
+collect2: error: ld returned 1 exit status
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ rm BOOTX64.EFI
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi.c  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o BOOTX64.EFI efi.h
+/usr/bin/x86_64-w64-mingw32-ld: no input files
+collect2: error: ld returned 1 exit status
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi.c  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o BOOTX64.EFI efi.h
+/usr/bin/x86_64-w64-mingw32-ld: no input files
+collect2: error: ld returned 1 exit status
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ rm efi
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ rm efi.h.gch 
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi  efi.c  efi.h
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ rm BOOTX64.EFI 
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi_main  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o BOOTX64.EFI efi.c
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi  efi.c  efi.h  efi.h.gch
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi_main  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o Hello.EFI efi.c
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+BOOTX64.EFI  efi  efi.c  efi.h  efi.h.gch  Hello.EFI
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ rm BOOTX64.EFI 
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+efi  efi.c  efi.h  efi.h.gch  Hello.EFI
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi_main  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o Hello.EFI efi.c
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+efi  efi.c  efi.h  efi.h.gch  Hello.EFI
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+efi  efi.c  efi.h  efi.h.gch  Hello.EFI
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi_main  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o Hello.EFI efi.c
+efi.c: In function ‘efi_main’:
+efi.c:10:15: error: ‘EFI_SYSTEM_TABLE’ has no member named ‘ConOut’; did you mean ‘Conout’?
+   10 |  SystemTable->ConOut->Reset(SystemTable->ConOut, false);
+      |               ^~~~~~
+      |               Conout
+efi.c:10:42: error: ‘EFI_SYSTEM_TABLE’ has no member named ‘ConOut’; did you mean ‘Conout’?
+   10 |  SystemTable->ConOut->Reset(SystemTable->ConOut, false);
+      |                                          ^~~~~~
+      |                                          Conout
+efi.c:14:15: error: ‘EFI_SYSTEM_TABLE’ has no member named ‘ConOut’; did you mean ‘Conout’?
+   14 |  SystemTable->ConOut->ClearScreen(SystemTable->ConOut);
+      |               ^~~~~~
+      |               Conout
+efi.c:14:48: error: ‘EFI_SYSTEM_TABLE’ has no member named ‘ConOut’; did you mean ‘Conout’?
+   14 |  SystemTable->ConOut->ClearScreen(SystemTable->ConOut);
+      |                                                ^~~~~~
+      |                                                Conout
+efi.c:17:15: error: ‘EFI_SYSTEM_TABLE’ has no member named ‘ConOut’; did you mean ‘Conout’?
+   17 |  SystemTable->ConOut->OutputString(SystemTable->ConOut, u"TESTING, Hello UEFI World!\r\n");
+      |               ^~~~~~
+      |               Conout
+efi.c:17:49: error: ‘EFI_SYSTEM_TABLE’ has no member named ‘ConOut’; did you mean ‘Conout’?
+   17 |  SystemTable->ConOut->OutputString(SystemTable->ConOut, u"TESTING, Hello UEFI World!\r\n");
+      |                                                 ^~~~~~
+      |                                                 Conout
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi_main  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o Hello.EFI efi.c
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+efi.c  efi.h  efi.h.gch  efi.o  Hello.EFI
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+efi.c  efi.h  efi.h.gch  efi.o  Hello.EFI
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ rm Hello.EFI 
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+efi.c  efi.h  efi.h.gch  efi.o
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ x86_64-w64-mingw32-gcc  -Wl,--subsystem,10  -e efi_main  -std=c17  -Wall  -Wextra  -Wpedantic  -mno-red-zone  -ffreestanding  -nostdlib  -o Hello.EFI efi.c
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ ls
+efi.c  efi.h  efi.h.gch  efi.o  Hello.EFI
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ pwd
+/media/rodrigo/UEFI SHELL/PracticasUEFI
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL/PracticasUEFI $ cd ..
+rodrigo@raspberrypi:/media/rodrigo/UEFI SHELL $ cd ..
+rodrigo@raspberrypi:/media/rodrigo $ cd /home/rodrigo
+rodrigo@raspberrypi:~ $ ls
+Bookshelf  e~ha_tb.o      ha.o        ha.vcd    ovmf_2023.11-4_all.deb  test_exor.vcd           Videos
+Desktop    exorGate_tb.v  ha_tb       ha.vhdl   Pictures                thinclient_drives       VMs
+Documents  exorGate.v     ha_tb.o     LCD-show  Public                  uefi-dev                work-obj93.cf
+Downloads  exor_wav       ha_tb.vhdl  Music     Templates               UEFI-GPT-image-creator  %WORKSPACE
+rodrigo@raspberrypi:~ $ 
